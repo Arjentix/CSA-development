@@ -29,10 +29,6 @@ EXPOSE 2525
 
 RUN mkdir -p /app/log
 
-# Creating new user cause Docker uses root by default which is not good
-RUN groupadd -r sample && useradd -r -g sample sample
-USER sample
-
 WORKDIR /app
 COPY --from=build /app/bin/AnimalStore .
 ENTRYPOINT [ "./AnimalStore" ]
