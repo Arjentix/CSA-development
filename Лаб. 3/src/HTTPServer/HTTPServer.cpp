@@ -23,7 +23,7 @@ HTTPServer::SendFailed::SendFailed(const std::string& what_msg)
 	: HTTPServer::ServerException(what_msg) {}
 
 
-std::string get_n_bytes(int client, size_t n) {
+std::string HTTPServer::get_n_bytes(int client, size_t n) {
 	if (n <= 0) {
 		return "";
 	}
@@ -106,7 +106,7 @@ HTTPHandler::Request HTTPServer::get_request(int client) {
 		cont_len = atoi(parsed_request.headers.at("content-length").c_str());
 	}
 	else {
-		return parsed_request;
+		throw std::runtime_error("Expected Content-Length header");
 	}
 
 	parsed_request.body += get_n_bytes(client, cont_len - parsed_request.body.size());
