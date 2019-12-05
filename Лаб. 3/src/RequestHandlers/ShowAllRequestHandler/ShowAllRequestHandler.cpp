@@ -19,9 +19,10 @@ ShowAllRequestHandler::ShowAllRequestHandler(AnimalManager& animal_manager)
 	: RequestHandlerBase(animal_manager) {}
 
 HTTPHandler::Answer ShowAllRequestHandler::handle(HTTPHandler::Request request) {
-	json body = json::array();
-	for (auto animal_ptr : _animal_manager.get_all()) {
-		body.push_back(*animal_ptr);
+	json body = json::object();
+	map<int, shared_ptr<Animal>> id_to_animals = _animal_manager.get_all();
+	for (const auto& [id, animal] : id_to_animals) {
+			body.push_back({to_string(id), *animal});
 	}
 
 	string str_body = body.dump(4);

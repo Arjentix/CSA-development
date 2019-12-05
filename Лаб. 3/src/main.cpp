@@ -50,52 +50,63 @@ int main(int argc, char** argv)
 		close(2);
 	}
 
-	logger.open("log/log.txt");
-	logger << "Start" << endl;
+	try {
+		logger.open("log/log.txt");
+		logger << "Start" << endl;
 
-	HTTPServer server;
-	server.start_server(2525);
-	server.turn_to_listen(5);
+		HTTPServer server;
+		server.start_server(2525);
+		server.turn_to_listen(5);
 
-	AnimalManager animal_manager;
+		AnimalManager animal_manager(
+			"mysql", 
+			"AnimalStoreAdmin",
+			"secret",
+			"AnimalStoreDb",
+			3306
+		);
 
-	// Capturing SIGINT signal
-	signal(SIGINT, signal_handler);
+		// Capturing SIGINT signal
+		signal(SIGINT, signal_handler);
 
-	// Adding handlers
-	ClientHandler client_handler;
-	client_handler.add_request_handler(
-		{HTTPHandler::Method::POST, "/animals/new", {}},
-		make_shared<RequestHandler::AddNewRequestHandler>(animal_manager)
-	);
-	client_handler.add_request_handler(
-		{HTTPHandler::Method::POST, "/animals/change", {}},
-		make_shared<RequestHandler::ChangeRequestHandler>(animal_manager)
-	);
-	client_handler.add_request_handler(
-		{HTTPHandler::Method::POST, "/animals/purchase", {}},
-		make_shared<RequestHandler::PurchaseRequestHandler>(animal_manager)
-	);
-	client_handler.add_request_handler(
-		{HTTPHandler::Method::GET, "/animals/all", {}},
-		make_shared<RequestHandler::ShowAllRequestHandler>(animal_manager)
-	);
-	client_handler.add_request_handler(
-		{HTTPHandler::Method::GET, "/animals", {"id"}},
-		make_shared<RequestHandler::GetByIdRequestHandler>(animal_manager)
-	);
-	client_handler.add_request_handler(
-		{HTTPHandler::Method::GET, "/animals", {"type"}},
-		make_shared<RequestHandler::GetByTypeRequestHandler>(animal_manager)
-	);
+		// Adding handlers
+		ClientHandler client_handler;
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::POST, "/animals/new", {}},
+			make_shared<RequestHandler::AddNewRequestHandler>(animal_manager)
+		);
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::POST, "/animals/change", {}},
+			make_shared<RequestHandler::ChangeRequestHandler>(animal_manager)
+		);
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::POST, "/animals/purchase", {}},
+			make_shared<RequestHandler::PurchaseRequestHandler>(animal_manager)
+		);
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::GET, "/animals/all", {}},
+			make_shared<RequestHandler::ShowAllRequestHandler>(animal_manager)
+		);
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::GET, "/animals", {"id"}},
+			make_shared<RequestHandler::GetByIdRequestHandler>(animal_manager)
+		);
+		client_handler.add_request_handler(
+			{HTTPHandler::Method::GET, "/animals", {"type"}},
+			make_shared<RequestHandler::GetByTypeRequestHandler>(animal_manager)
+		);
 
-	vector<future<void>> futures;
-	while (!finish) {
-		int client_sock = server.connect_client();
-		logger << "Client connected on socket " << client_sock << endl;
-		futures.push_back(async(
-			&ClientHandler::handle_client, &client_handler, client_sock
-		));
+		vector<future<void>> futures;
+		while (!finish) {
+			int client_sock = server.connect_client();
+			logger << "Client connected on socket " << client_sock << endl;
+			futures.push_back(async(
+				&ClientHandler::handle_client, &client_handler, client_sock
+			));
+		}
+	}
+	catch (exception& ex) {
+		logger << ex.what() << endl;
 	}
 	
 	logger << "Shutting down" << endl;

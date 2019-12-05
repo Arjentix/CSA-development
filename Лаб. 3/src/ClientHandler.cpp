@@ -38,7 +38,7 @@ void ClientHandler::handle_client(int client_sock) const
 	try {
 		// Parsing request
 		auto request = HTTPServer::get_request(client_sock);
-		logger << "Getted request body: \n" + request.body << endl;
+		logger << "Getted request: \n" + request.str() << endl;
 
 		vector<string> vars;
 		for (const auto& [var, value] : request.variables) {
@@ -104,6 +104,7 @@ void ClientHandler::handle_client(int client_sock) const
 	}
 
 	// Sending answer
+	logger << "Answer:\n" << http_answer.str() << endl;
 	HTTPServer::send_answer(client_sock, http_answer);
 
 	logger << "Closing connection with client on socket " << client_sock << endl;

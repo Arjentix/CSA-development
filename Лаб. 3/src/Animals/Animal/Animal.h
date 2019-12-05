@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include "SimpleSQL.h"
 #include "nlohmann/json.hpp"
 
 class Animal {
@@ -36,6 +37,12 @@ public:
 	virtual std::string voice() const = 0;
 
 	friend void to_json(nlohmann::json& j, const Animal& a);
+	friend void from_json(const nlohmann::json& j, Animal& a);
+
+	virtual void to_db(SimpleSQL::Connector& db) const;
+	virtual void to_db(SimpleSQL::Connector& db, int id) const;
+
+	friend void from_row(SimpleSQL::Row row, Animal& a);
 
 private:
 	std::string	_type;
@@ -43,8 +50,13 @@ private:
 	size_t		_age;
 	double		_price;
 
+	void update_main_table(SimpleSQL::Connector& db) const;
+
 protected:
 	virtual nlohmann::json _to_json() const;
+	virtual void _from_json(const nlohmann::json& j);
+
+	virtual void _from_row(SimpleSQL::Row row);
 };
 
 /**
@@ -63,3 +75,5 @@ void to_json(nlohmann::json& j, const Animal& a);
  * 		price: double
  */
 void from_json(const nlohmann::json& j, Animal& a);
+
+void from_row(SimpleSQL::Row row, Animal& a);

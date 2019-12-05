@@ -1,3 +1,3 @@
 #! /bin/bash
 
-kill -s SIGTERM $(pgrep "AnimalStore")
+kill -s SIGKILL $(pgrep "AnimalStore")

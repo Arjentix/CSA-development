@@ -16,41 +16,18 @@ if(NOT TARGET RequestHandlerBase)
 	)
 endif()
 
-# Adding Cat
+# Adding BuildAnimal
 set(
-	CAT_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../Animals/Cat
+	BUILD_ANIMAL_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../BuildAnimal
 )
-if(NOT TARGET Cat)
+if(NOT TARGET BuildAnimal)
 	add_subdirectory(
-		${CAT_INCLUDE_DIR}
-		${CMAKE_CURRENT_BINARY_DIR}/Animals/Cat
+		${BUILD_ANIMAL_INCLUDE_DIR}
+		${CMAKE_CURRENT_BINARY_DIR}/BuildAnimal
 	)
 endif()
 
-# Adding Dog
-set(
-	DOG_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../Animals/Dog
-)
-if(NOT TARGET Dog)
-	add_subdirectory(
-		${DOG_INCLUDE_DIR}
-		${CMAKE_CURRENT_BINARY_DIR}/Animals/Dog
-	)
-endif()
-
-# Adding Fox
-set(
-	FOX_INCLUDE_DIR
-	${CMAKE_CURRENT_SOURCE_DIR}/../../Animals/Fox
-)
-if(NOT TARGET Fox)
-	add_subdirectory(
-		${FOX_INCLUDE_DIR}
-		${CMAKE_CURRENT_BINARY_DIR}/Animals/Fox
-	)
-endif()
 
 # ---------------------------------
 
@@ -66,14 +43,10 @@ set_target_properties(AddNewRequestHandler PROPERTIES
 
 target_include_directories(AddNewRequestHandler PUBLIC
 		${REQUEST_HANDLER_BASE_INCLUDE_DIR}
-		${CAT_INCLUDE_DIR}
-		${DOG_INCLUDE_DIR}
-		${FOX_INCLUDE_DIR}
+		${BUILD_ANIMAL_INCLUDE_DIR}
 )
 target_link_libraries(AddNewRequestHandler
 		RequestHandlerBase
-		Cat
-		Dog
-		Fox
+		BuildAnimal
 		nlohmann_json::nlohmann_json
 )

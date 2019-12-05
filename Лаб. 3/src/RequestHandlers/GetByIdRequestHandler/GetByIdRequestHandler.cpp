@@ -21,8 +21,19 @@ GetByIdRequestHandler::GetByIdRequestHandler(AnimalManager& animal_manager)
 HTTPHandler::Answer GetByIdRequestHandler::handle(HTTPHandler::Request request) {
 	try {
 		int id = atoi(request.variables.at("id").c_str());
-		json body = _animal_manager[id];
+		shared_ptr<Animal> animal_ptr = _animal_manager.get(id);
+		if (animal_ptr == nullptr) {
+			return {
+				404, "Not Found",
+				{
+					{"Content-Length", "0"},
+					{"Connection", "close"}
+				},
+				""
+			};
+		}
 
+		json body(animal_ptr);
 		string str_body = body.dump(4);
 		return {
 			200, "OK",

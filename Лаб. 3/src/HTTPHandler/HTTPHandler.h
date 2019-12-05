@@ -34,6 +34,8 @@ namespace HTTPHandler {
 		std::map<std::string, std::string> variables;
 		std::map<std::string, std::string> headers;
 		std::string body;
+
+		std::string str() const;
 	};
 
 	/**
@@ -42,9 +44,10 @@ namespace HTTPHandler {
 	struct Answer {
 		int status_code;
 		std::string status_description;
-		// Vector is used for saving headers order
 		std::map<std::string, std::string> headers;
 		std::string body;
+
+		std::string str() const;
 	};
 
 	/**

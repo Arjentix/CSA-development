@@ -106,7 +106,7 @@ HTTPHandler::Request HTTPServer::get_request(int client) {
 		cont_len = atoi(parsed_request.headers.at("content-length").c_str());
 	}
 	else {
-		throw std::runtime_error("Expected Content-Length header");
+		return parsed_request;
 	}
 
 	parsed_request.body += get_n_bytes(client, cont_len - parsed_request.body.size());

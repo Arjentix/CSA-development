@@ -8,7 +8,10 @@
 #pragma once
 
 #include "Animal.h"
+#include "SimpleSQL.h"
+#include <string>
 #include <unordered_map>
+#include <map>
 #include <vector>
 #include <memory>
 #include <type_traits>
@@ -17,20 +20,31 @@
 
 class AnimalManager {
 public:
-	int add(std::shared_ptr<Animal> animal_ptr);
-	void remove(int id);
-	std::vector<std::shared_ptr<const Animal>> get_all() const;
+	AnimalManager(
+		std::string host,
+		std::string user_name,
+		std::string password,
+		std::string db_name,
+		int port
+	);
 
-	std::vector<std::shared_ptr<const Animal>> get_all_of_type(
+	int add(std::shared_ptr<Animal> animal_ptr);
+
+	void remove(int id);
+
+	std::shared_ptr<Animal> get(int id);
+
+	std::map<int, std::shared_ptr<Animal>> get_all() const;
+
+	std::map<int, std::shared_ptr<Animal>> get_all_of_type(
 		const std::string& type
 	) const;
 
-	Animal& operator[](int id);
+	void save(int id, std::shared_ptr<Animal> animal_ptr);
 
 private:
-	std::unordered_map<int, std::shared_ptr<Animal>> _id_to_animal;
-	int _last_id = 0;
+	mutable SimpleSQL::Connector _db;
 	mutable std::mutex _locker;
 };
 
-void to_json(nlohmann::json& j, const std::shared_ptr<const Animal> animal_ptr);
+void to_json(nlohmann::json& j, std::shared_ptr<const Animal> animal_ptr);

@@ -24,11 +24,16 @@ public:
 
 	std::string voice() const override;
 
+	void to_db(SimpleSQL::Connector& db) const override;
+	void to_db(SimpleSQL::Connector& db, int id) const override;
+
 private:
 	std::string _breed;
+	void add_breed_to_db(SimpleSQL::Connector& db, int id) const;
 
 protected:
 	nlohmann::json _to_json() const override;
-};
+	void _from_json(const nlohmann::json& j) override;
 
-void from_json(const nlohmann::json& j, Dog& dog);
+	void _from_row(SimpleSQL::Row row) override;
+};

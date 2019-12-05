@@ -6,9 +6,7 @@
  */
 
 #include "AddNewRequestHandler.h"
-#include "Cat.h"
-#include "Dog.h"
-#include "Fox.h"
+#include "BuildAnimal.h"
 #include <string>
 
 using namespace RequestHandler;
@@ -21,17 +19,8 @@ AddNewRequestHandler::AddNewRequestHandler(AnimalManager& animal_manager)
 HTTPHandler::Answer AddNewRequestHandler::handle(HTTPHandler::Request request) {
 	auto json_body = json::parse(request.body);
 	string type = json_body.at("type").get<string>();
-	shared_ptr<Animal> animal_ptr;
 
-	if (type == "cat") {
-		animal_ptr = make_shared<Cat>(json_body.get<Cat>());
-	}
-	else if (type == "dog") {
-		animal_ptr = make_shared<Dog>(json_body.get<Dog>());
-	}
-	else if (type == "fox") {
-		animal_ptr = make_shared<Fox>(json_body.get<Fox>());
-	}
+	shared_ptr<Animal> animal_ptr = build_animal(type, json_body);
 
 	int id = _animal_manager.add(animal_ptr);
 	json json_answer = {{"id", id}};

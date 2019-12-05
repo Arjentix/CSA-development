@@ -16,14 +16,28 @@ if(NOT TARGET nlohmann_json::nlohmann_json)
 	)
 endif()
 
+# Adding SimpleSQL
+set (
+	SIMPLE_SQL_INCLUDE_DIR
+	${CMAKE_CURRENT_SOURCE_DIR}/../../SimpleSQL
+)
+if(NOT TARGET SimpleSQL)
+	add_subdirectory(
+		${SIMPLE_SQL_INCLUDE_DIR}
+		${CMAKE_CURRENT_BINARY_DIR}/SimpleSQL
+	)
+endif()
+
 set(SOURCE_ANIMAL Animal.cpp)
 
 add_library(Animal ${SOURCE_ANIMAL})
 
 target_include_directories(Animal PUBLIC
 		${JSON_INCLUDE_DIR}
+		${SIMPLE_SQL_INCLUDE_DIR}
 )
 
 target_link_libraries(Animal
 		nlohmann_json::nlohmann_json
+		SimpleSQL
 )
