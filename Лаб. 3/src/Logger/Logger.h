@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <mutex>
+#include <iostream>
 
 /**
  * Logger - class for logging your data into the log file provided in ctr.
@@ -33,7 +34,7 @@ public:
 	 * Logger() - takes name of the log file as a parameter.
 	 * All content of file will be discarded.
 	 */
-	Logger(const std::string& file_name);
+	Logger(const std::string& file_name, bool std_output = true);
 
 	/**
 	 * open() - opens another file and close previous.
@@ -52,7 +53,12 @@ public:
 	// Handling std::endl;
 	Logger& operator<<(std::ostream& (*f)(std::ostream&)) {
 		std::lock_guard guard(_locker);
+
 		_log_file << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
+		if (_std_output == true) {
+			std::cout << "[" << _get_current_time() << "]::" << _sstream.str() << std::endl;
+		}
+
 		_sstream = std::stringstream();
 
 		return *this;
@@ -61,6 +67,7 @@ private:
 	std::ofstream _log_file;
 	std::stringstream _sstream;
 	std::mutex _locker;
+	bool _std_output;
 
 	/*
 	 * get_time() - returns string with current date and time.
